@@ -32,16 +32,6 @@
   --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bed: #10141C; --sheet: #171C26; --ink: #E8ECF3; --muted: #9AA3B4; --faint: #6E7789; --line: #2A3242;
-  --accent: #7D9BFF; --sun: #FFD23F; --sun-ink: #171C28;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70;
-  --e0: #184f95; --e1: #256abf; --e2: #3987e5; --e3: #6da7ec; --e4: #9ec5f4;
-  --good: #57CF8E; --good-bg: #173327; --part: #E9B45A; --part-bg: #3A2D15;
-  --none: #A3AAB8; --none-bg: #242A36; --bad: #F2847B; --bad-bg: #3D1F1D;
-  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
-  color-scheme: dark;
-} }
 :root[data-theme="dark"] {
   --bed: #10141C; --sheet: #171C26; --ink: #E8ECF3; --muted: #9AA3B4; --faint: #6E7789; --line: #2A3242;
   --accent: #7D9BFF; --sun: #FFD23F; --sun-ink: #171C28;
@@ -249,14 +239,6 @@ footer { color: var(--muted); font-size: .88rem; border-top: 1px solid var(--lin
   --f-display: "Archivo", Helvetica, Arial, sans-serif;
   --f-body: "Archivo", Helvetica, Arial, sans-serif;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bed: #0D0D0D; --sheet: #0D0D0D; --ink: #F0F0F0; --muted: #A3A3A3; --faint: #6E6E6E;
-  --line: #262626; --rule: #F0F0F0; --accent: #FF3B30; --sun: #FF3B30; --sun-ink: #0D0D0D;
-  --s1: #FF3B30; --s2: #F0F0F0; --s3: #7A7A7A;
-  --e1: #F0F0F0; --e2: #F0F0F0; --e3: #F0F0F0; --e4: #F0F0F0;
-  --good: #F0F0F0; --part: #A3A3A3; --none: #6E6E6E; --bad: #FF3B30;
-  color-scheme: dark;
-} }
 :root[data-theme="dark"] {
   --bed: #0D0D0D; --sheet: #0D0D0D; --ink: #F0F0F0; --muted: #A3A3A3; --faint: #6E6E6E;
   --line: #262626; --rule: #F0F0F0; --accent: #FF3B30; --sun: #FF3B30; --sun-ink: #0D0D0D;
@@ -547,7 +529,7 @@ th.group:not(:empty) { box-shadow: inset 0 -1px 0 var(--muted); }
   </div>
 
   <footer>
-    <span>By Jonathan Erhardt. Run with <a href="https://inspect.aisi.org.uk/">Inspect</a>. Judge: Claude Opus 5.5.</span>
+    <span>By Jonathan Erhardt &amp; Claude. Run with <a href="https://inspect.aisi.org.uk/">Inspect</a>. Judge: Claude Opus 5.5.</span>
     <span>Draft · results from October 2026</span>
   </footer>
 </main>
@@ -555,19 +537,17 @@ th.group:not(:empty) { box-shadow: inset 0 -1px 0 var(--muted); }
 <div class="tip" id="tip" hidden></div>
 <script>
 (() => {
-  // Day / night: an explicit choice sets data-theme on <html> (remembered in this browser);
-  // without one the page follows the system setting.
+  // Day / night: day is the default; a choice sets data-theme on <html> and is
+  // remembered in this browser.
   const root = document.documentElement;
-  const dark = matchMedia("(prefers-color-scheme: dark)");
   const buttons = document.querySelectorAll("[data-set-theme]");
-  const current = () => root.dataset.theme || (dark.matches ? "dark" : "light");
+  const current = () => root.dataset.theme || "light";
   const sync = () => buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setTheme === current())));
   buttons.forEach(b => b.addEventListener("click", () => {
     root.dataset.theme = b.dataset.setTheme;
     try { localStorage.setItem("jb-theme", b.dataset.setTheme); } catch (e) {}
     sync();
   }));
-  dark.addEventListener("change", sync);
   new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
   sync();
 })();
