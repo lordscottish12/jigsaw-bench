@@ -23,6 +23,7 @@
   --sun-ink: #171C28;
   --s1: #D40C1A; --s2: #E15055; --s3: #E77E7F; --s4: #3330D6; --s5: #0274C7; --s6: #428CDB; --s7: #67A7E3;   /* models: Claude in reds (Opus, Sonnet, Haiku), GPT in blues (Astra, Sol, Terra, Luna) */
   --e0: #86b6ef; --e1: #2a78d6; --e2: #1c5cab; --e3: #104281; --e4: #0d366b;  /* effort, low -> high */
+  --ov-d: #171C28; --ov-a: #8B93A3; --ov-ci: #2C55E8;  /* overall score: describing, assembling, interval */
   --good: #1E9A5A; --good-bg: #E3F5EA;
   --part: #B7791F; --part-bg: #FBF0DC;
   --none: #6B7280; --none-bg: #EEF0F3;
@@ -37,6 +38,7 @@
   --accent: #7D9BFF; --sun: #FFD23F; --sun-ink: #171C28;
   --s1: #FC4540; --s2: #D73D44; --s3: #B23641; --s4: #4552ED; --s5: #3F98EB; --s6: #3585C9; --s7: #2B74AA;
   --e0: #184f95; --e1: #256abf; --e2: #3987e5; --e3: #6da7ec; --e4: #9ec5f4;
+  --ov-d: #E8ECF3; --ov-a: #6E7789; --ov-ci: #7D9BFF;
   --good: #57CF8E; --good-bg: #173327; --part: #E9B45A; --part-bg: #3A2D15;
   --none: #A3AAB8; --none-bg: #242A36; --bad: #F2847B; --bad-bg: #3D1F1D;
   --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
@@ -242,12 +244,42 @@ footer { color: var(--muted); font-size: .88rem; border-top: 1px solid var(--lin
 
 @media (prefers-reduced-motion: reduce) { .title-piece { transition: none; } .title-piece:hover { transform: rotate(-12deg); } }
 
+/* Overall score: stacked bars, one row per model */
+.overall { display: grid; gap: .55rem; background: var(--sheet); border: 1px solid var(--line); padding: 1.1rem 1.25rem .9rem; }
+.ov-row { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 2.6rem; gap: .9rem; align-items: center; outline: none; }
+.ov-row:focus-visible .ov-name { text-decoration: underline; text-decoration-color: var(--accent); }
+.ov-name { display: flex; align-items: center; gap: .5rem; font-weight: 600; font-size: .92rem; white-space: nowrap; }
+.ov-name .key { width: .9rem; height: .9rem; overflow: visible; flex: none; }
+.ov-track { position: relative; height: 1.6rem; background-image: linear-gradient(to right, var(--line) 1px, transparent 1px); background-size: calc(var(--step) * 100%) 100%; }
+.ov-seg { position: absolute; top: .2rem; bottom: .2rem; left: calc(var(--x) * 100%); width: calc(var(--w) * 100%); }
+.ov-d { background: var(--ov-d); }
+.ov-a { background: var(--ov-a); }
+.ov-seg.ov-a { border-left: 2px solid var(--sheet); }
+.ov-ci { position: absolute; top: 50%; left: calc(var(--lo) * 100%); width: calc((var(--hi) - var(--lo)) * 100%); border-top: 2px solid var(--ov-ci); }
+.ov-ci::before, .ov-ci::after { content: ""; position: absolute; top: calc(-.4rem - 1px); height: .8rem; border-left: 2px solid var(--ov-ci); }
+.ov-ci::before { left: 0; } .ov-ci::after { right: 0; }
+.ov-val { font: 600 .9rem var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; }
+.ov-axis .ov-ticks { position: relative; height: 1rem; }
+.ov-ticks span { position: absolute; left: calc(var(--x) * 100%); width: 3rem; margin-left: -1.5rem; text-align: center; font: 400 .72rem var(--f-mono); color: var(--muted); }
+.ov-note { color: var(--muted); font-size: .82rem; margin-top: .2rem; }
+.ov-legend { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; font-size: .88rem; color: var(--muted); }
+.ov-legend span { display: inline-flex; align-items: center; gap: .45rem; }
+.ov-sw { display: inline-block; width: 1.1rem; height: .75rem; }
+.ov-sw.ov-whisker { height: .75rem; border: 2px solid var(--ov-ci); border-block: 0; background: linear-gradient(var(--ov-ci), var(--ov-ci)) center / 100% 2px no-repeat; }
+@media (max-width: 520px) {
+  .ov-row { grid-template-columns: 7.6rem minmax(0, 1fr) 2.3rem; gap: .6rem; }
+  .ov-name { font-size: .8rem; gap: .35rem; }
+  .overall { padding-inline: .9rem; }
+  .ov-ticks span.minor { display: none; }
+}
+
 /* ===== Boxy experiment: Archivo, hairline boxes, square corners, one red accent ===== */
 :root {
   --bed: #FFFFFF; --sheet: #FFFFFF; --ink: #0D0D0D; --muted: #6B6B6B; --faint: #9A9A9A;
   --line: #E4E4E4; --rule: #0D0D0D; --accent: #E10600; --sun: #E10600; --sun-ink: #FFFFFF;
   --s1: #D40C1A; --s2: #E15055; --s3: #E77E7F; --s4: #3330D6; --s5: #0274C7; --s6: #428CDB; --s7: #67A7E3;
   --e1: #0D0D0D; --e2: #0D0D0D; --e3: #0D0D0D; --e4: #0D0D0D;
+  --ov-d: #0D0D0D; --ov-a: #8A8A8A; --ov-ci: #E10600;
   --good: #0D0D0D; --good-bg: transparent; --part: #6B6B6B; --part-bg: transparent;
   --none: #9A9A9A; --none-bg: transparent; --bad: #E10600; --bad-bg: transparent;
   --shadow: none;
@@ -259,6 +291,7 @@ footer { color: var(--muted); font-size: .88rem; border-top: 1px solid var(--lin
   --line: #262626; --rule: #F0F0F0; --accent: #FF3B30; --sun: #FF3B30; --sun-ink: #0D0D0D;
   --s1: #FC4540; --s2: #D73D44; --s3: #B23641; --s4: #4552ED; --s5: #3F98EB; --s6: #3585C9; --s7: #2B74AA;
   --e1: #F0F0F0; --e2: #F0F0F0; --e3: #F0F0F0; --e4: #F0F0F0;
+  --ov-d: #F0F0F0; --ov-a: #7A7A7A; --ov-ci: #FF3B30;
   --good: #F0F0F0; --part: #A3A3A3; --none: #6E6E6E; --bad: #FF3B30;
   color-scheme: dark;
 }
@@ -389,8 +422,22 @@ th.group:not(:empty) { box-shadow: inset 0 -1px 0 var(--muted); }
     <header>
       <span class="label">Results</span>
       <h2 id="results">Models can describe the picture. They can barely put it together.</h2>
-      <p class="lede">8 scored pictures, each cut at about 50, 100 and 200 pieces. The benchmark is far from solved: even the best model loses a quarter of the description score, and at about 200 pieces no model assembles anything.</p>
+      <p class="lede">8 scored pictures, each cut at about 50, 100 and 200 pieces. On a combined score from 0 (guessing) to 1 (perfect), the best model, GPT-6 Astra, reaches 0.46. The benchmark is far from solved: even the best model loses a quarter of the description score, and at about 200 pieces no model assembles anything.</p>
     </header>
+
+    <div class="block">
+      <h3>Overall score</h3>
+      <p>Describing and assembling, averaged: 0 is guessing, 1 is perfect on both. <button type="button" class="info" data-tip="The average of two scores, one per task, each 0 for guessing and 1 for perfect. Describing: the f1 score, rescaled so that 0 is what a description written without seeing any scans earns (0.15: Opus 5.5, asked to guess). Assembling: the proximity score, where 0 is a random arrangement. Both are averaged over all 24 puzzles, so ~50, ~100 and ~200 pieces count the same. Each model at its default effort." aria-label="How the overall score works: The average of two scores, one per task, each 0 for guessing and 1 for perfect. Describing: the f1 score, rescaled so that 0 is what a description written without seeing any scans earns (0.15: Opus 5.5, asked to guess). Assembling: the proximity score, where 0 is a random arrangement. Both are averaged over all 24 puzzles, so ~50, ~100 and ~200 pieces count the same. Each model at its default effort.">?</button></p>
+      <div class="ov-legend"><span><i class="ov-sw ov-d"></i>Describing (half the score)</span><span><i class="ov-sw ov-a"></i>Assembling (half the score)</span><span><i class="ov-sw ov-whisker"></i>95% interval</span></div>
+      <div class="overall" role="img" aria-label="Overall score by model, best first">
+        <div class="ov-row" tabindex="0" data-tip="GPT-6 Astra · overall 0.46 (95% interval 0.41 to 0.51) · describing 0.71 · assembling 0.21"><span class="ov-name"><svg class="key" viewBox="-7 -7 14 14" aria-hidden="true"><g transform="translate(0.0 0.0)"><path class="dot s4" d="M0 -5.6L5.2 3.6H-5.2Z"/></g></svg>GPT-6 Astra</span><span class="ov-track" style="--step:0.1667"><span class="ov-seg ov-d" style="--x:0;--w:0.5950"></span><span class="ov-seg ov-a" style="--x:0.5950;--w:0.1751"></span><span class="ov-ci" style="--lo:0.6827;--hi:0.8576"></span></span><span class="ov-val">0.46</span></div><div class="ov-row" tabindex="0" data-tip="Opus 5.5 · overall 0.41 (95% interval 0.35 to 0.47) · describing 0.66 · assembling 0.15"><span class="ov-name"><svg class="key" viewBox="-7 -7 14 14" aria-hidden="true"><circle class="dot s1" cx="0.0" cy="0.0" r="4.5"/></svg>Opus 5.5</span><span class="ov-track" style="--step:0.1667"><span class="ov-seg ov-d" style="--x:0;--w:0.5533"></span><span class="ov-seg ov-a" style="--x:0.5533;--w:0.1257"></span><span class="ov-ci" style="--lo:0.5770;--hi:0.7809"></span></span><span class="ov-val">0.41</span></div><div class="ov-row" tabindex="0" data-tip="Sonnet 5.5 · overall 0.38 (95% interval 0.31 to 0.45) · describing 0.63 · assembling 0.12"><span class="ov-name"><svg class="key" viewBox="-7 -7 14 14" aria-hidden="true"><g transform="translate(0.0 0.0)"><path class="dot s2" d="M-4 -4H4V4H-4Z"/></g></svg>Sonnet 5.5</span><span class="ov-track" style="--step:0.1667"><span class="ov-seg ov-d" style="--x:0;--w:0.5285"></span><span class="ov-seg ov-a" style="--x:0.5285;--w:0.1034"></span><span class="ov-ci" style="--lo:0.5161;--hi:0.7479"></span></span><span class="ov-val">0.38</span></div><div class="ov-row" tabindex="0" data-tip="GPT-5.6 Sol · overall 0.33 (95% interval 0.28 to 0.39) · describing 0.60 · assembling 0.07"><span class="ov-name"><svg class="key" viewBox="-7 -7 14 14" aria-hidden="true"><g transform="translate(0.0 0.0)"><path class="dot s5" d="M0 5.6L5.2 -3.6H-5.2Z"/></g></svg>GPT-5.6 Sol</span><span class="ov-track" style="--step:0.1667"><span class="ov-seg ov-d" style="--x:0;--w:0.4977"></span><span class="ov-seg ov-a" style="--x:0.4977;--w:0.0580"></span><span class="ov-ci" style="--lo:0.4687;--hi:0.6427"></span></span><span class="ov-val">0.33</span></div><div class="ov-row" tabindex="0" data-tip="GPT-5.6 Terra · overall 0.29 (95% interval 0.20 to 0.37) · describing 0.50 · assembling 0.07"><span class="ov-name"><svg class="key" viewBox="-7 -7 14 14" aria-hidden="true"><g transform="translate(0.0 0.0)"><path class="dot s6" d="M-1.8 -5.2H1.8V-1.8H5.2V1.8H1.8V5.2H-1.8V1.8H-5.2V-1.8H-1.8Z"/></g></svg>GPT-5.6 Terra</span><span class="ov-track" style="--step:0.1667"><span class="ov-seg ov-d" style="--x:0;--w:0.4185"></span><span class="ov-seg ov-a" style="--x:0.4185;--w:0.0580"></span><span class="ov-ci" style="--lo:0.3314;--hi:0.6217"></span></span><span class="ov-val">0.29</span></div><div class="ov-row" tabindex="0" data-tip="GPT-5.6 Luna · overall 0.24 (95% interval 0.18 to 0.31) · describing 0.42 · assembling 0.07"><span class="ov-name"><svg class="key" viewBox="-7 -7 14 14" aria-hidden="true"><g transform="translate(0.0 0.0) rotate(45)"><path class="dot s7" d="M-1.8 -5.2H1.8V-1.8H5.2V1.8H1.8V5.2H-1.8V1.8H-5.2V-1.8H-1.8Z"/></g></svg>GPT-5.6 Luna</span><span class="ov-track" style="--step:0.1667"><span class="ov-seg ov-d" style="--x:0;--w:0.3469"></span><span class="ov-seg ov-a" style="--x:0.3469;--w:0.0590"></span><span class="ov-ci" style="--lo:0.3028;--hi:0.5089"></span></span><span class="ov-val">0.24</span></div><div class="ov-row" tabindex="0" data-tip="Haiku 5.5 · overall 0.23 (95% interval 0.17 to 0.29) · describing 0.43 · assembling 0.02"><span class="ov-name"><svg class="key" viewBox="-7 -7 14 14" aria-hidden="true"><g transform="translate(0.0 0.0)"><path class="dot s3" d="M0 -5.4L5.4 0L0 5.4L-5.4 0Z"/></g></svg>Haiku 5.5</span><span class="ov-track" style="--step:0.1667"><span class="ov-seg ov-d" style="--x:0;--w:0.3621"></span><span class="ov-seg ov-a" style="--x:0.3621;--w:0.0198"></span><span class="ov-ci" style="--lo:0.2842;--hi:0.4796"></span></span><span class="ov-val">0.23</span></div><div class="ov-row ov-axis" aria-hidden="true"><span></span><span class="ov-ticks"><span style="--x:0.0000">0</span><span class=minor style="--x:0.1667">0.1</span><span style="--x:0.3333">0.2</span><span class=minor style="--x:0.5000">0.3</span><span style="--x:0.6667">0.4</span><span class=minor style="--x:0.8333">0.5</span><span style="--x:1.0000">0.6</span></span><span></span></div>
+        <p class="ov-note">Overall score. The interval comes from the spread across the 8 pictures; models whose intervals overlap are not clearly apart.</p>
+      </div>
+      <details>
+        <summary>Show the numbers</summary>
+        <div class="rows"><table class="results"><thead><tr><th class="group" colspan="1"></th><th class="group" colspan="2">Describing</th><th class="group" colspan="1">Assembling</th><th class="group" colspan="2"></th></tr><tr><th>Model</th><th class=num>f1</th><th class=num>rescaled</th><th class=num>Proximity</th><th class=num>Overall</th><th class=num>95% interval</th></tr></thead><tbody><tr><td>GPT-6 Astra</td><td class=num>0.76</td><td class=num>0.71</td><td class=num>0.21</td><td class=num><b>0.46</b></td><td class=num>0.41 to 0.51</td></tr><tr><td>Opus 5.5</td><td class=num>0.71</td><td class=num>0.66</td><td class=num>0.15</td><td class=num><b>0.41</b></td><td class=num>0.35 to 0.47</td></tr><tr><td>Sonnet 5.5</td><td class=num>0.69</td><td class=num>0.63</td><td class=num>0.12</td><td class=num><b>0.38</b></td><td class=num>0.31 to 0.45</td></tr><tr><td>GPT-5.6 Sol</td><td class=num>0.66</td><td class=num>0.60</td><td class=num>0.07</td><td class=num><b>0.33</b></td><td class=num>0.28 to 0.39</td></tr><tr><td>GPT-5.6 Terra</td><td class=num>0.58</td><td class=num>0.50</td><td class=num>0.07</td><td class=num><b>0.29</b></td><td class=num>0.20 to 0.37</td></tr><tr><td>GPT-5.6 Luna</td><td class=num>0.50</td><td class=num>0.42</td><td class=num>0.07</td><td class=num><b>0.24</b></td><td class=num>0.18 to 0.31</td></tr><tr><td>Haiku 5.5</td><td class=num>0.52</td><td class=num>0.43</td><td class=num>0.02</td><td class=num><b>0.23</b></td><td class=num>0.17 to 0.29</td></tr><tr><td>No scans (guessing)</td><td class=num>0.15</td><td class=num>0.00</td><td class=num>0.00</td><td class=num><b>0.00</b></td><td class=num>–</td></tr></tbody></table></div>
+      </details>
+    </div>
 
     <div class="stats">
       <div class="stat"><b>0.76</b><span>best description score (f1, out of 1), GPT-6 Astra</span></div>
